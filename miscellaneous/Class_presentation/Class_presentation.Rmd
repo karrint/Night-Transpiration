@@ -29,6 +29,7 @@ Then, use functions stored in the 'functions.R' script to add columns populated 
 setwd("C:/Users/karri/Documents/Night-Transpiration")
 rmarkdown::render("experiment/processing/gs_dataprocessing.Rmd")
 ```
+
 ```{r show functions}
 setwd("C:/Users/karri/Documents/Night-Transpiration")
 source("experiment/processing/functions.R")
@@ -82,4 +83,6 @@ print(gs.boxplots, width=getOption("width"))
 ```{r more figures}
 setwd("C:/Users/karri/Documents/Night-Transpiration")
 knitr::include_graphics("miscellaneous/pictures/IMG_0610.HEIC")
+knitr::include_graphics("experiment/figures/Fig4.tiff")
+
 ```
