@@ -128,6 +128,6 @@ print(gs.boxplots, width=getOption("width"))
 ```{r more figures}
 setwd("C:/Users/karri/Documents/Night-Transpiration")
 knitr::include_graphics("miscellaneous/pictures/IMG_0610.HEIC")
-knitr::include_graphics("experiment/figures/Fig4.tiff")
+knitr::include_graphics("experiment/figures/Figure_TIFFs/Fig4.tiff")
 
 ```
