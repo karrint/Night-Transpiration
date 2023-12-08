@@ -1,0 +1,45 @@
+---
+title: "Q1_avggsn.tx"
+author: "Karrin Tennant"
+date: "2023-12-08"
+output: html_document
+---
+
+```{r libs, include=FALSE}
+library(readxl)
+library(ggplot2)
+library(ggpubr)
+library(ggthemes)
+library(dplyr)
+library(patchwork)
+```
+
+```{r source data}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+bigdata <- read.csv("data/processed_data/bigdata.csv")
+bigdata_PD <- read.csv("data/processed_data/bigdata_PD.csv")
+bigdata_MD <- read.csv("data/processed_data/bigdata_MD.csv")
+```
+
+
+```{r predawn gsn}
+#select predawn measurements
+
+(boxplot1 <- ggplot(bigdata_PD) + geom_boxplot(aes(tx, gsw, fill=tx)) + scale_fill_viridis_d() + scale_x_discrete(name="Planting Group", labels=c("B","C", "C-B", "C-C", "C-X-C")) + theme_base() + scale_y_continuous(limits=c(0.03,0.165)) + labs(title="Nighttime stomatal conductance") + theme(legend.position = "none"))
+
+```
+
+```{r midday gsw}
+#select midday measurements
+
+(boxplot2 <- ggplot(bigdata_MD) + geom_boxplot(aes(tx, gsw, fill=tx)) + scale_fill_viridis_d() + scale_x_discrete(name="Planting Group", labels=c("B","C", "C-B", "C-C", "C-X-C")) + theme_base() + scale_y_continuous(limits=c(0.03,0.165)) + labs(title="Daytime stomatal conductance") + theme(legend.position = "none"))
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r format plots}
+gs.boxplots <- boxplot1 + boxplot2
+print(gs.boxplots)
+```
+

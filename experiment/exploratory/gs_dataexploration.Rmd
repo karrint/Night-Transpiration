@@ -1,0 +1,61 @@
+---
+title: "Data_exploration"
+author: "Karrin Tennant"
+date: "2023-12-08"
+output: html_document
+---
+
+```{r source data}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+source("experiment/processing/functions.R")
+rmarkdown::render("experiment/processing/gs_dataprocessing.Rmd")
+```
+
+```{r summary stats}
+summary(bigdata$gsw)
+summary(bigdata_PD$gsw)
+summary(bigdata_MD$gsw)
+
+summary(bigdata$E)
+summary(bigdata_PD$E)
+summary(bigdata_MD$E)
+
+summary(bigdata$A)
+summary(bigdata_PD$A)
+summary(bigdata_MD$A)
+
+```
+
+```{r check distributions}
+#Check for normality/data distributions 
+op<- par(mfrow=c(3,1))
+hist(bigdata$gsw)
+hist(bigdata_PD$gsw)
+hist(bigdata_MD$gsw)
+hist(bigdata$E)
+hist(bigdata_PD$E)
+hist(bigdata_MD$E)
+hist(bigdata$A)
+hist(bigdata_PD$A)
+hist(bigdata_PD$A)
+par(op)
+```
+
+```{R check outliers}
+#OUTLIERS# code not functional
+#Cleveland dotplots for all variables. Each panel corresponds to a variable. 
+#The x-axes show the values of a variable and the y-axes the observations, 
+# which are grouped by the values of Planting Treatment
+# op<- par(mfrow=c(3,2),mar=c(3,3,3,1))
+# 
+# dotchart(bigdata$gsw,main="Stomatal Conductance",group=bigdata$tx, ylim = c(0,1.1))
+# dotchart(bigdata$E,main="Transpiration",group=bigdata$tx) 
+# dotchart(bigdata$A,main="Photosynthesis",group=bigdata$tx, ylim = c(1,50)) 
+# par(op)
+```
+
+``` {r check fo colinearity}
+#COLINEARITY-continuous variables
+select(bigdata, gsw,E,A) %>%
+ggpairs() 
+```

@@ -1,0 +1,152 @@
+---
+title: "gs data processing"
+author: "Karrin Tennant"
+date: "2023-12-06"
+output: html_document
+---
+
+```{r load libraries}
+#load libraries
+library(readxl)
+library(dplyr)
+library(GGally)
+
+#import functions
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+source("experiment/processing/functions.R")
+```
+
+```{r upload data}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+#specify data
+D01_PD <- read_excel("data/raw_data/2020-06-23-0943_pd.xlsx")
+D01_MD <- read_excel("data/raw_data/2020-06-23-1750_md.xlsx")
+D02_PD <- read_excel("data/raw_data/2020-06-24-0845_pd.xlsx")
+D02_MD <- read_excel("data/raw_data/2020-06-24-1751_md.xlsx")
+D08_PD <- read_excel("data/raw_data/2020-06-30-0902_pd.xlsx")
+D08_MD <- read_excel("data/raw_data/2020-06-30-1756_md.xlsx")
+D09_PD <- read_excel("data/raw_data/2020-07-02-0927_pd.xlsx")
+D09_MD <- read_excel("data/raw_data/2020-07-02-1802_md.xlsx")
+D14_PD <- read_excel("data/raw_data/2020-07-07-0917_pd.xlsx")
+D14_MD <- read_excel("data/raw_data/2020-07-07-1750_md.xlsx")
+D15_PD <- read_excel("data/raw_data/2020-07-08-0926_pd.xlsx")
+D15_MD <- read_excel("data/raw_data/2020-07-08-1758_md.xlsx")
+D22_PD <- read_excel("data/raw_data/2020-07-15-0856_pd.xlsx")
+D22_MD <- read_excel("data/raw_data/2020-07-15-1822_md.xlsx")
+D29_PD <- read_excel("data/raw_data/2020-07-22-0915_pd.xlsx")
+D29_MD <- read_excel("data/raw_data/2020-07-22-1713_md.xlsx")
+D30_PD <- read_excel("data/raw_data/2020-07-23-0915_pd.xlsx")
+D30_MD <- read_excel("data/raw_data/2020-07-23-1757_md.xlsx")
+D39_PD <- read_excel("data/raw_data/2020-08-01-0909_pd.xlsx")
+D39_MD <- read_excel("data/raw_data/2020-08-01-1756_md.xlsx")
+D40_PD <- read_excel("data/raw_data/2020-08-02-0831_pd.xlsx")
+D40_MD <- read_excel("data/raw_data/2020-08-02-1741_md.xlsx")
+D43_PD <- read_excel("data/raw_data/2020-08-05-0742_pd.xlsx")
+D43_MD <- read_excel("data/raw_data/2020-08-05-1714_md.xlsx")
+D49_PD <- read_excel("data/raw_data/2020-08-11-0836_pd.xlsx")
+D49_MD <- read_excel("data/raw_data/2020-08-11-1735_md.xlsx")
+D56_PD <- read_excel("data/raw_data/2020-08-18-0819_pd.xlsx")
+D56_MD <- read_excel("data/raw_data/2020-08-18-1739_md.xlsx")
+```
+
+```{r assign IDs}
+sampled21 <- c("D01_MD", "D01_PD", "D08_MD", "D08_PD", "D14_MD", "D14_PD")
+sampled14 <- c("D02_MD", "D02_PD", "D09_MD", "D09_PD", "D15_MD", "D15_PD")
+sampled20 <- c("D22_MD", "D22_PD", "D29_MD", "D29_PD", "D39_MD", "D39_PD", "D40_MD", "D40_PD")
+sampled15 <- c("D30_MD", "D30_PD")
+sampledall <- c("D43_MD", "D43_PD", "D49_MD", "D49_PD", "D56_MD", "D56_PD")
+
+ID14 <- c(22,23,24,25,26,27,28,29,30,31,32,33,34,35)
+ID15 <- c(5,6,7,10,13,14,17,18,19,24,25,26,29,30,35)
+ID20 <- c(1,2,3,4,8,9,11,12,15,16,20,21,22,23,27,28,31,32,33,34)
+ID21 <- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)
+ID35 <- c(1:35)
+
+
+for (name in sampled14) {
+  assign(name, add_ID_column(get(name), ID14))
+}
+for (name in sampled15) {
+  assign(name, add_ID_column(get(name), ID15))
+}
+for (name in sampled20) {
+  assign(name, add_ID_column(get(name), ID20))
+}
+for (name in sampled21) {
+  assign(name, add_ID_column(get(name), ID21))
+}
+for (name in sampledall) {
+  assign(name, add_ID_column(get(name), ID35))
+}
+```
+
+```{r assign treatments}
+dfs <- c(sampled14,sampled15,sampled20,sampled21,sampledall)
+
+#replaced funcition below add_tx_column_to_selected(dfs)
+```
+
+```{r combine daily dfs to make super df}
+#combine daily dfs
+bigdata <- tbl_df(bind_rows(D02_MD, D02_PD, D09_MD, D09_PD, D15_MD, D15_PD, D30_MD, D30_PD, D22_MD, D22_PD, D29_MD, D29_PD, D39_MD, D39_PD, D40_MD, D40_PD, D01_MD, D01_PD, D08_MD, D08_PD, D14_MD, D14_PD, D43_MD, D43_PD, D49_MD, D49_PD, D56_MD, D56_PD)) %>% 
+  mutate(
+      tx = case_when(
+        ID %in% c(1, 2, 11, 12, 20, 21, 22, 23, 31, 32) ~ "CXC",
+        ID %in% c(3, 4, 8, 9, 15, 16, 27, 28, 33, 34) ~ "CC",
+        ID %in% c(6, 14, 19, 26, 30) ~ "CB",
+        ID %in% c(7, 10, 17, 24, 35) ~ "C",
+        ID %in% c(5, 13, 18, 25, 29) ~ "B",
+        TRUE ~ NA_character_
+      )
+    )
+
+glimpse(bigdata)
+
+# save "bigdata"
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+write.csv(bigdata, file = "data/processed_data/bigdata.csv", row.names = FALSE)
+```
+```{r combine daily PD dfs to make super PD df}}
+#create a master dataframe for predawn measurements only
+#combine daily dfs
+bigdata_PD <- as_tibble(bind_rows(D02_PD, D09_PD, D15_PD, D30_PD,D22_PD, D29_PD, D39_PD, D40_PD, D01_PD,D08_PD, D14_PD, D43_PD,D49_PD, D56_PD)) %>% 
+  mutate(
+      tx = case_when(
+        ID %in% c(1, 2, 11, 12, 20, 21, 22, 23, 31, 32) ~ "CXC",
+        ID %in% c(3, 4, 8, 9, 15, 16, 27, 28, 33, 34) ~ "CC",
+        ID %in% c(6, 14, 19, 26, 30) ~ "CB",
+        ID %in% c(7, 10, 17, 24, 35) ~ "C",
+        ID %in% c(5, 13, 18, 25, 29) ~ "B",
+        TRUE ~ NA_character_
+      )
+    )
+
+glimpse(bigdata_PD)
+
+# save "bigdata"
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+write.csv(bigdata_PD, file = "data/processed_data/bigdata_PD.csv", row.names = FALSE)
+```
+
+```{r combine daily MD dfs to make super MD df}
+#create a master dataframe for midday measurements only
+#combine daily dfs
+bigdata_MD <- as_tibble(bind_rows(D02_MD, D09_MD, D15_MD, D30_MD,D22_MD, D29_MD, D39_MD, D40_MD, D01_MD,D08_MD, D14_MD, D43_MD,D49_MD, D56_MD)) %>% 
+  mutate(
+      tx = case_when(
+        ID %in% c(1, 2, 11, 12, 20, 21, 22, 23, 31, 32) ~ "CXC",
+        ID %in% c(3, 4, 8, 9, 15, 16, 27, 28, 33, 34) ~ "CC",
+        ID %in% c(6, 14, 19, 26, 30) ~ "CB",
+        ID %in% c(7, 10, 17, 24, 35) ~ "C",
+        ID %in% c(5, 13, 18, 25, 29) ~ "B",
+        TRUE ~ NA_character_
+      )
+    )
+
+glimpse(bigdata_MD)
+
+# save "bigdata"
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+write.csv(bigdata_MD, file = "data/processed_data/bigdata_MD.csv", row.names = FALSE)
+```
+

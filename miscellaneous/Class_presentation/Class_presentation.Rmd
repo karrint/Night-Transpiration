@@ -1,0 +1,85 @@
+---
+title: "Presentation"
+author: "Karrin Tennant"
+date: "2023-12-08"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+knitr::include_graphics("miscellaneous/pictures/thesis_poster.png")
+```
+
+
+## Repository Organization
+```{bash}
+tree /mnt/c/Users/karri/Documents/Night-Transpiration
+```
+## Process Raw Data
+First, we import individual data files.
+Next, we combine them into a master dataframe.
+Then, use functions stored in the 'functions.R' script to add columns populated by values based on conditional test.
+```{r process data, include=FALSE}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+rmarkdown::render("experiment/processing/gs_dataprocessing.Rmd")
+```
+```{r show functions}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+source("experiment/processing/functions.R")
+```
+
+```{r}
+head(bigdata)
+```
+
+## Data Exploration
+Explore processed data to visualize data distributions, summary statistics, outliers, and variable co-linearity.
+```{r Data Exploration, eval = TRUE, warning = FALSE, error = FALSE}
+# summary stats
+summary(bigdata$gsw)
+summary(bigdata_PD$gsw)
+summary(bigdata_MD$gsw)
+summary(bigdata$E)
+summary(bigdata_PD$E)
+summary(bigdata_MD$E)
+summary(bigdata$A)
+summary(bigdata_PD$A)
+summary(bigdata_MD$A)
+
+#Check for normality/data distributions 
+op<- par(mfrow=c(3,1))
+hist(bigdata$gsw)
+hist(bigdata_PD$gsw)
+hist(bigdata_MD$gsw)
+hist(bigdata$E)
+hist(bigdata_PD$E)
+hist(bigdata_MD$E)
+hist(bigdata$A)
+hist(bigdata_PD$A)
+hist(bigdata_PD$A)
+par(op)
+
+#COLINEARITY-continuous variables
+select(bigdata, gsw,E,A) %>%
+ggpairs() 
+```
+
+```{r Figure script, include=FALSE}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+rmarkdown::render("experiment/figures/fig_gsn.tx.Rmd")
+```
+
+```{r figure, warning=FALSE}
+print(gs.boxplots, width=getOption("width"))
+```
+
+```{r more figures}
+setwd("C:/Users/karri/Documents/Night-Transpiration")
+knitr::include_graphics("miscellaneous/pictures/IMG_0610.HEIC")
+```
